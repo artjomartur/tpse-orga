@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  role         String     @default("STUDENT")
+  passwordHash String
+  createdAt    DateTime   @default(now())
+
+  teamMembers    TeamMember[]
+  submissions    Submission[] @relation("SubmissionSubmittedBy")
+  grades         Grade[]      @relation("GradeGradedBy")
+
+  scheduleItems  ScheduleItem[] @relation("ScheduleItemCreatedBy")
+  announcements  Announcement[]  @relation("AnnouncementCreatedBy")
+  resources      Resource[]      @relation("ResourceCreatedBy")
+}
+
+model Team {
+  id          String        @id @default(cuid())
+  name        String
+  projectName String?
+  maxMembers  Int           @default(5)
+  createdAt   DateTime      @default(now())
+
+  members     TeamMember[]
+  submissions Submission[]
+}
+
+model TeamMember {
+  id     String @id @default(cuid())
+  userId String
+  teamId String
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@unique([userId, teamId])
+}
+
+model Submission {
+  id         String   @id @default(cuid())
+  teamId     String
+  type       String
+  deadline   DateTime?
+  fileUrl    String?
+  status     String   @default("PENDING")
+  submittedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  submittedById String?
+  submittedBy   User?    @relation("SubmissionSubmittedBy", fields: [submittedById], references: [id])
+
+  grade Grade?
+}
+
+model Grade {
+  id            String   @id @default(cuid())
+  submissionId String   @unique
+
+  points       Float?
+  feedback     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  gradedById String?
+  gradedBy   User? @relation("GradeGradedBy", fields: [gradedById], references: [id])
+
+  submission Submission @relation(fields: [submissionId], references: [id])
+}
+
+model ScheduleItem {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime
+  type      String
+  createdAt DateTime @default(now())
+
+  createdById String?
+  createdBy   User?   @relation("ScheduleItemCreatedBy", fields: [createdById], references: [id])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  createdById String?
+  createdBy   User?   @relation("AnnouncementCreatedBy", fields: [createdById], references: [id])
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  category  String?
+  createdAt DateTime @default(now())
+
+  createdById String?
+  createdBy   User?   @relation("ResourceCreatedBy", fields: [createdById], references: [id])
+}
+
