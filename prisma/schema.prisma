@@ -8,31 +8,34 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
   name         String?
-  role         String     @default("STUDENT")
+  role         String   @default("STUDENT")
   passwordHash String
-  createdAt    DateTime   @default(now())
+  createdAt    DateTime @default(now())
 
-  teamMembers    TeamMember[]
-  submissions    Submission[] @relation("SubmissionSubmittedBy")
-  grades         Grade[]      @relation("GradeGradedBy")
+  teamMembers TeamMember[]
+  submissions Submission[] @relation("SubmissionSubmittedBy")
+  grades      Grade[]      @relation("GradeGradedBy")
 
-  scheduleItems  ScheduleItem[] @relation("ScheduleItemCreatedBy")
-  announcements  Announcement[]  @relation("AnnouncementCreatedBy")
-  resources      Resource[]      @relation("ResourceCreatedBy")
+  scheduleItems ScheduleItem[] @relation("ScheduleItemCreatedBy")
+  announcements Announcement[] @relation("AnnouncementCreatedBy")
+  resources     Resource[]     @relation("ResourceCreatedBy")
 
-  studentTodos       StudentTodo[]
-  teamSpecUploads    TeamSpecDocument[] @relation("TeamSpecUploadedBy")
+  studentTodos    StudentTodo[]
+  teamSpecUploads TeamSpecDocument[] @relation("TeamSpecUploadedBy")
+
+  hiwiActivities HiwiActivity[]
+  hiwiTodos      HiwiTodo[]
 }
 
 model Team {
-  id          String        @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   projectName String?
-  maxMembers  Int           @default(5)
-  createdAt   DateTime      @default(now())
+  maxMembers  Int      @default(5)
+  createdAt   DateTime @default(now())
 
   members     TeamMember[]
   submissions Submission[]
@@ -43,10 +46,10 @@ model Team {
 
 /// Verfügbare Projekte (Katalog für Präferenzen)
 model Project {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
   description String?
-  sortOrder   Int      @default(0)
+  sortOrder   Int     @default(0)
 
   teamChoices TeamProjectChoice[]
 }
@@ -106,33 +109,33 @@ model TeamMember {
 }
 
 model Submission {
-  id         String   @id @default(cuid())
-  teamId     String
-  type       String
-  deadline   DateTime?
-  fileUrl    String?
-  status     String   @default("PENDING")
-  submittedAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  teamId      String
+  type        String
+  deadline    DateTime?
+  fileUrl     String?
+  status      String    @default("PENDING")
+  submittedAt DateTime  @default(now())
 
   team Team @relation(fields: [teamId], references: [id])
 
   submittedById String?
-  submittedBy   User?    @relation("SubmissionSubmittedBy", fields: [submittedById], references: [id])
+  submittedBy   User?   @relation("SubmissionSubmittedBy", fields: [submittedById], references: [id])
 
   grade Grade?
 }
 
 model Grade {
-  id            String   @id @default(cuid())
-  submissionId String   @unique
+  id           String @id @default(cuid())
+  submissionId String @unique
 
-  points       Float?
-  feedback     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  points    Float?
+  feedback  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   gradedById String?
-  gradedBy   User? @relation("GradeGradedBy", fields: [gradedById], references: [id])
+  gradedBy   User?   @relation("GradeGradedBy", fields: [gradedById], references: [id])
 
   submission Submission @relation(fields: [submissionId], references: [id])
 }
@@ -169,3 +172,24 @@ model Resource {
   createdBy   User?   @relation("ResourceCreatedBy", fields: [createdById], references: [id])
 }
 
+model HiwiActivity {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  minutes     Int      @default(0)
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model HiwiTodo {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
