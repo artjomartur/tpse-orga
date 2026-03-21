@@ -60,6 +60,23 @@ body {
 
 .app-main a:hover,
 .app-header a:hover {
-  text-decoration: underline;
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@layer base {
+  @media (max-width: 640px) {
+    h1 {
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+  }
 }
 
