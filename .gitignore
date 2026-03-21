@@ -4,6 +4,11 @@ node_modules/
 dist/
 build/
 .next/
+.open-next/
+.wrangler/
+
+# OpenNext / Wrangler lokal (Secrets)
+.dev.vars
 
 # Lokale Umgebung (Secrets nicht committen)
 .env
