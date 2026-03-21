@@ -9,32 +9,40 @@ export default async function HiwiDashboardPage() {
   });
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold dark:text-gray-100">Hiwi Dashboard</h1>
-      <p className="text-gray-600 dark:text-gray-400">Übersicht und Schnellzugriff für Lehrassistenten.</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Hiwi Dashboard</h1>
+        <p className="mt-2 text-slate-600 dark:text-slate-400">Übersicht und Schnellzugriff für Lehrassistenten.</p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="p-4 border rounded-lg bg-orange-50 dark:bg-orange-900/20 dark:border-orange-900/30 border-orange-200 text-orange-800 dark:text-orange-200">
-          <h2 className="font-semibold mb-2">Offene Bewertungen</h2>
-          <p className="text-3xl font-bold mb-4">{ungradedSubmissions}</p>
-          <Link href="/hiwi/grading" className="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 underline underline-offset-2">
-            Zum Assessment Portal →
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="group flex flex-col p-6 rounded-2xl border border-slate-200/60 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50">
+          <h2 className="font-semibold text-lg mb-2 text-slate-900 dark:text-slate-100">Offene Bewertungen</h2>
+          <p className="text-4xl font-bold tracking-tight text-orange-600 dark:text-orange-400 mb-6 flex-1">
+            {ungradedSubmissions}
+          </p>
+          <Link href="/hiwi/grading" className="inline-flex items-center text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300">
+            Zum Assessment Portal <span className="ml-1 transition-transform group-hover:translate-x-1">&rarr;</span>
           </Link>
         </div>
 
-        <div className="p-4 border rounded-lg bg-blue-50 dark:bg-blue-900/20 dark:border-blue-900/30 border-blue-200 text-blue-800 dark:text-blue-200">
-          <h2 className="font-semibold mb-2">Meine ToDos</h2>
-          <p className="mt-2 text-sm">Behalte den Überblick über deine Aufgaben als Hiwi.</p>
-          <Link href="/hiwi/todos" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline underline-offset-2 mt-4 inline-block">
-            ToDos ansehen →
+        <div className="group flex flex-col p-6 rounded-2xl border border-slate-200/60 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50">
+          <h2 className="font-semibold text-lg mb-2 text-slate-900 dark:text-slate-100">Meine ToDos</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-1">
+            Behalte den Überblick über deine Aufgaben als Hiwi.
+          </p>
+          <Link href="/hiwi/todos" className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+            ToDos ansehen <span className="ml-1 transition-transform group-hover:translate-x-1">&rarr;</span>
           </Link>
         </div>
 
-        <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-900/20 dark:border-green-900/30 border-green-200 text-green-800 dark:text-green-200">
-          <h2 className="font-semibold mb-2">Aktivitäten</h2>
-          <p className="mt-2 text-sm">Tracke deine Arbeitsstunden und Tätigkeiten.</p>
-          <Link href="/hiwi/activities" className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 underline underline-offset-2 mt-4 inline-block">
-            Zu den Aktivitäten →
+        <div className="group flex flex-col p-6 rounded-2xl border border-slate-200/60 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50">
+          <h2 className="font-semibold text-lg mb-2 text-slate-900 dark:text-slate-100">Aktivitäten</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-1">
+            Tracke deine Arbeitsstunden und Tätigkeiten.
+          </p>
+          <Link href="/hiwi/activities" className="inline-flex items-center text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300">
+            Zu den Aktivitäten <span className="ml-1 transition-transform group-hover:translate-x-1">&rarr;</span>
           </Link>
         </div>
       </div>

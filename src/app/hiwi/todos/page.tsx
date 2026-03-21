@@ -39,43 +39,45 @@ export default function HiwiTodosPage() {
   };
 
   return (
-    <div className="space-y-4 max-w-2xl">
-      <h1 className="text-2xl font-bold dark:text-gray-100">Meine ToDos (Hiwi)</h1>
-      <p className="text-gray-600 dark:text-gray-400">Verwalte deine Aufgaben rund um die Hiwi-Tätigkeit.</p>
+    <div className="space-y-6 max-w-2xl">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Meine ToDos (Hiwi)</h1>
+        <p className="mt-2 text-slate-600 dark:text-slate-400">Verwalte deine Aufgaben rund um die Hiwi-Tätigkeit.</p>
+      </div>
 
-      <form onSubmit={handleCreate} className="flex gap-2 my-4">
+      <form onSubmit={handleCreate} className="flex gap-3 my-6">
         <input
           type="text"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Neue Aufgabe..."
-          className="flex-1 rounded-md border p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+          className="flex-1 rounded-xl border border-slate-200/60 p-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-slate-900/50 dark:border-slate-800/60 dark:text-slate-100"
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Hinzufügen</button>
+        <button type="submit" className="rounded-xl bg-blue-600 px-6 py-3 font-medium text-white shadow-sm transition-colors hover:bg-blue-700">Hinzufügen</button>
       </form>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {todos.map((todo) => (
-          <div key={todo.id} className="flex items-center justify-between p-3 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800">
-            <div className="flex items-center gap-3">
+          <div key={todo.id} className="group flex items-center justify-between p-4 rounded-xl border border-slate-200/60 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-900/50 dark:border-slate-800/60">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => handleToggle(todo.id, todo.done)}
-                className={`flex h-6 w-6 items-center justify-center rounded-full border ${
-                  todo.done ? "bg-green-500 border-green-500 text-white" : "border-gray-300 dark:border-gray-600"
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                  todo.done ? "bg-green-500 border-green-500 text-white" : "border-slate-300 dark:border-slate-600"
                 }`}
               >
                 {todo.done && <Check className="h-4 w-4" />}
               </button>
-              <span className={`text-sm ${todo.done ? "line-through text-gray-500 dark:text-gray-500" : "text-gray-900 dark:text-gray-100"}`}>
+              <span className={`text-base font-medium ${todo.done ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-slate-100"}`}>
                 {todo.title}
               </span>
             </div>
-            <button onClick={() => handleDelete(todo.id)} className="text-red-500 hover:text-red-700 p-1">
-              <Trash2 className="h-4 w-4" />
+            <button onClick={() => handleDelete(todo.id)} className="text-slate-400 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+              <Trash2 className="h-5 w-5" />
             </button>
           </div>
         ))}
-        {todos.length === 0 && <p className="text-sm text-gray-500 dark:text-gray-400">Keine ToDos vorhanden.</p>}
+        {todos.length === 0 && <p className="text-sm text-slate-500 dark:text-slate-400">Keine ToDos vorhanden.</p>}
       </div>
     </div>
   );
