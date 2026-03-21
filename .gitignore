@@ -1,10 +1,14 @@
 node_modules/
 .npm-cache/
 .DS_Store
-dist/
-build/
-.next/
-.open-next/
+*.pem
+
+# Next.js build output
+.next
+out
+
+# Cloudflare OpenNext
+.open-next
 .wrangler/
 
 # OpenNext / Wrangler lokal (Secrets)
