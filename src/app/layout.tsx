@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Providers from "./providers";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "TPSE Orga",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link className="hover:underline" href="/register">
                   Register
                 </Link>
+                <ThemeToggle />
               </nav>
             </div>
           </header>

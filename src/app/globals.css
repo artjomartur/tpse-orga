@@ -15,6 +15,11 @@ body {
   color: #111827;
 }
 
+.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
 /* Layout-Chrome: wirkt auch, wenn Tailwind-Utilities nicht geladen werden */
 .app-body {
   min-height: 100vh;
@@ -23,6 +28,11 @@ body {
 .app-header {
   border-bottom: 1px solid #e5e7eb;
   background: #fff;
+}
+
+.dark .app-header {
+  border-bottom: 1px solid #374151;
+  background: #1f2937;
 }
 
 .app-container {
@@ -41,6 +51,11 @@ body {
 .app-header a {
   color: #2563eb;
   text-decoration: none;
+}
+
+.dark .app-main a,
+.dark .app-header a {
+  color: #60a5fa;
 }
 
 .app-main a:hover,
