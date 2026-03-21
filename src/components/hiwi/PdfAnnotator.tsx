@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MessageSquare, Trash2 } from "lucide-react";
 
 interface Props {
@@ -24,7 +24,7 @@ export default function PdfAnnotator({ teamId }: Props) {
   const pdfUrl = `/api/hiwi/team-spec-pdf/${teamId}`;
   const annotationsUrl = `/api/hiwi/annotations/${teamId}`;
 
-  const load = () => {
+  const load = useCallback(() => {
     fetch(annotationsUrl)
       .then((r) => r.json())
       .then((d) => {
@@ -40,9 +40,9 @@ export default function PdfAnnotator({ teamId }: Props) {
         }
       })
       .catch(console.error);
-  };
+  }, [annotationsUrl]);
 
-  useEffect(() => { load(); }, [annotationsUrl]);
+  useEffect(() => { load(); }, [load]);
 
   const addNote = async () => {
     if (!noteText.trim()) return;

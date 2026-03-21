@@ -24,6 +24,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/adapter-d1": "^7.5.0",
     "@prisma/client": "^6.19.2",
     "autoprefixer": "^10.4.27",
     "bcryptjs": "^3.0.3",
