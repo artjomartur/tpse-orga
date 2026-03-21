@@ -1,10 +1,11 @@
 import type { OpenNextConfig } from "@opennextjs/cloudflare";
 
-const config: OpenNextConfig = {
+const config = {
   default: {
     override: {
       wrapper: "cloudflare-node",
       converter: "edge",
+      proxyExternalRequest: "fetch",
     },
   },
   middleware: {
@@ -15,6 +16,6 @@ const config: OpenNextConfig = {
       proxyExternalRequest: "fetch",
     },
   },
-};
+} as OpenNextConfig;
 
 export default config;
