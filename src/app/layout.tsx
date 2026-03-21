@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Providers from "./providers";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { UserNav } from "../components/UserNav";
 
 export const metadata: Metadata = {
   title: "TPSE Orga",
@@ -26,12 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/">TPSE Orga</Link>
               </div>
               <nav className="flex gap-3 text-sm">
-                <Link className="hover:underline" href="/login">
-                  Login
-                </Link>
-                <Link className="hover:underline" href="/register">
-                  Register
-                </Link>
+                <UserNav />
                 <ThemeToggle />
               </nav>
             </div>
