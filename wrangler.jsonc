@@ -7,6 +7,14 @@
 		"binding": "ASSETS"
 	},
 	"compatibility_date": "2024-09-23",
+	"vars": {
+		"NEXTAUTH_URL": "https://tpse.artjombecker.com",
+		"NEXTAUTH_SECRET": "change-me-please-manual-update-recommended",
+		"ADMIN_EMAIL": "admin@example.com",
+		"ADMIN_PASSWORD": "change-me",
+		"ADMIN_NAME": "TPSE Admin",
+		"STUDENT_INVITE_TOKEN": ""
+	},
 	"observability": {
 		"enabled": true
 	},
