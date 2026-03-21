@@ -64,11 +64,11 @@ export default function LoginClient() {
 
   return (
     <div className="mx-auto max-w-md space-y-4">
-      <h1 className="text-2xl font-bold">Login</h1>
+      <h1 className="text-2xl font-bold dark:text-slate-100">Login</h1>
 
-      <form className="space-y-3 rounded border bg-white p-4" onSubmit={onSubmit}>
+      <form className="space-y-3 rounded-2xl border border-slate-200/60 bg-white/50 backdrop-blur-md p-6 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50" onSubmit={onSubmit}>
         <div className="space-y-1">
-          <label className="text-sm text-gray-700" htmlFor="email">
+          <label className="text-sm text-gray-700 dark:text-slate-400" htmlFor="email">
             E-Mail
           </label>
           <input
@@ -77,13 +77,13 @@ export default function LoginClient() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded border px-3 py-2 text-sm"
+            className="w-full rounded border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-100"
             required
           />
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm text-gray-700" htmlFor="password">
+          <label className="text-sm text-gray-700 dark:text-slate-400" htmlFor="password">
             Passwort
           </label>
           <input
@@ -92,17 +92,17 @@ export default function LoginClient() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded border px-3 py-2 text-sm"
+            className="w-full rounded border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-100"
             required
           />
         </div>
 
-        {error ? <div className="text-sm text-red-600">{error}</div> : null}
+        {error ? <div className="text-sm text-red-600 dark:text-red-400">{error}</div> : null}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-blue-500"
         >
           {loading ? "Prüfe..." : "Anmelden"}
         </button>

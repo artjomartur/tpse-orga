@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/hiwi", label: "Dashboard", match: (p: string) => p === "/hiwi" },
   { href: "/hiwi/grading", label: "Bewertungen", match: (p: string) => p.startsWith("/hiwi/grading") },
+  { href: "/hiwi/specs", label: "Spezifikationen", match: (p: string) => p.startsWith("/hiwi/specs") },
+  { href: "/hiwi/assignments", label: "Aufgaben", match: (p: string) => p.startsWith("/hiwi/assignments") },
   { href: "/hiwi/todos", label: "Meine ToDos", match: (p: string) => p.startsWith("/hiwi/todos") },
   { href: "/hiwi/activities", label: "Aktivitäten", match: (p: string) => p.startsWith("/hiwi/activities") },
 ];

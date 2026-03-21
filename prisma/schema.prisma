@@ -28,6 +28,8 @@ model User {
 
   hiwiActivities HiwiActivity[]
   hiwiTodos      HiwiTodo[]
+  pdfAnnotations PdfAnnotation[]
+  studentAssignments StudentAssignment[]
 }
 
 model Team {
@@ -95,6 +97,7 @@ model TeamSpecDocument {
 
   team       Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
   uploadedBy User? @relation("TeamSpecUploadedBy", fields: [uploadedById], references: [id])
+  annotations PdfAnnotation[]
 }
 
 model TeamMember {
@@ -192,4 +195,31 @@ model HiwiTodo {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PdfAnnotation {
+  id               String   @id @default(cuid())
+  teamSpecId       String
+  content          String   // JSON string storing react-pdf-highlighter annotation data
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  createdById      String
+  createdBy        User     @relation(fields: [createdById], references: [id])
+
+  teamSpecDocument TeamSpecDocument @relation(fields: [teamSpecId], references: [id], onDelete: Cascade)
+}
+
+/// Aktivitäten/Aufgaben, die ein Hiwi für Studierende anlegt
+model StudentAssignment {
+  id             String   @id @default(cuid())
+  title          String
+  description    String?  // Notizen / Aufgabenbeschreibung
+  submissionType String   // z.B. "PDF", "Link", "Code", "Präsentation"
+  deadline       DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdById    String
+  createdBy      User     @relation(fields: [createdById], references: [id])
 }

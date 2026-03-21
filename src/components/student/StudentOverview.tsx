@@ -30,8 +30,8 @@ export default function StudentOverview() {
   return (
     <div className="space-y-8">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900">Deine Übersicht</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Deine Übersicht</h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           Pflicht-Checkliste, dann die drei Aktivitäten – jeweils auf einer eigenen Seite über die Navigation.
         </p>
       </header>
@@ -41,14 +41,14 @@ export default function StudentOverview() {
       <TodoSection teamId={teamId} reloadKey={reloadKey} />
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-slate-900">Aktivitäten</h2>
-        <p className="text-sm text-slate-600">Status-Karten – Klick führt zur jeweiligen Seite.</p>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Aktivitäten</h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400">Status-Karten – Klick führt zur jeweiligen Seite.</p>
         <ActivityCards />
       </section>
 
-      <p className="text-xs text-slate-500">
-        Weitere Bereiche: <a className="underline" href="/my-submissions">Meine Abgaben</a>,{" "}
-        <a className="underline" href="/my-grades">Meine Noten</a>.
+      <p className="text-xs text-slate-500 dark:text-slate-400">
+        Weitere Bereiche: <a className="underline hover:text-slate-700 dark:hover:text-slate-300" href="/my-submissions">Meine Abgaben</a>,{" "}
+        <a className="underline hover:text-slate-700 dark:hover:text-slate-300" href="/my-grades">Meine Noten</a>.
       </p>
     </div>
   );

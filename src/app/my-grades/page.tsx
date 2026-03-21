@@ -42,34 +42,34 @@ export default function MyGradesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold">Meine Bewertungen</h1>
-        <p className="text-sm text-gray-700">Punkte und Feedback zu deinen Einreichungen.</p>
+        <h1 className="text-xl font-bold dark:text-slate-100">Meine Bewertungen</h1>
+        <p className="text-sm text-gray-700 dark:text-slate-400">Punkte und Feedback zu deinen Einreichungen.</p>
       </div>
 
-      <div className="rounded border bg-white p-4">
-        <h2 className="font-semibold">Übersicht</h2>
+      <div className="rounded-2xl border border-slate-200/60 bg-white/50 backdrop-blur-md p-6 shadow-sm dark:bg-slate-900/50 dark:border-slate-800/60">
+        <h2 className="font-semibold dark:text-slate-100">Übersicht</h2>
 
-        {loading ? <div className="mt-3 text-sm text-gray-700">Lade...</div> : null}
+        {loading ? <div className="mt-3 text-sm text-gray-700 dark:text-slate-400">Lade...</div> : null}
         {!loading && grades.length === 0 ? (
-          <div className="mt-3 text-sm text-gray-700">Noch keine Bewertungen vorhanden.</div>
+          <div className="mt-3 text-sm text-gray-700 dark:text-slate-400">Noch keine Bewertungen vorhanden.</div>
         ) : null}
 
         <div className="mt-4 space-y-3">
           {grades.map((g) => (
-            <div key={g.id} className="rounded border p-3">
+            <div key={g.id} className="rounded border border-slate-200 p-3 dark:border-slate-700 dark:bg-slate-800/50">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="font-semibold">{g.submission.type}</div>
-                  <div className="text-xs text-gray-500">{new Date(g.submission.submittedAt).toLocaleString()}</div>
-                  <div className="mt-1 text-sm text-gray-700">
+                  <div className="font-semibold dark:text-slate-100">{g.submission.type}</div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400">{new Date(g.submission.submittedAt).toLocaleString()}</div>
+                  <div className="mt-1 text-sm text-gray-700 dark:text-slate-300">
                     Punkte:{" "}
-                    <span className="font-medium">{g.points ?? "—"}</span>
-                    {g.feedback ? <div className="mt-1 text-xs text-gray-600">{g.feedback}</div> : null}
+                    <span className="font-medium dark:text-slate-100">{g.points ?? "—"}</span>
+                    {g.feedback ? <div className="mt-1 text-xs text-gray-600 dark:text-slate-400">{g.feedback}</div> : null}
                   </div>
                 </div>
                 <div className="text-right">
                   {g.submission.fileUrl ? (
-                    <a className="text-sm underline" href={g.submission.fileUrl} target="_blank" rel="noreferrer">
+                    <a className="text-sm underline hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300" href={g.submission.fileUrl} target="_blank" rel="noreferrer">
                       Datei öffnen
                     </a>
                   ) : null}
