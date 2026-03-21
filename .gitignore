@@ -4,4 +4,17 @@ node_modules/
 dist/
 build/
 .next/
-node_modules
+
+# Lokale Umgebung (Secrets nicht committen)
+.env
+.env.*
+!.env.example
+
+# SQLite / lokale Datenbanken
+*.db
+*.db-journal
+prisma/dev.db
+
+# Logs / OS
+npm-debug.log*
+*.log
