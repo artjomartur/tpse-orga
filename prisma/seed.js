@@ -67,6 +67,32 @@ async function main() {
   console.log(
     `Demo-Team "${team.name}" bereitgestellt (ohne feste Mitgliedszuordnung). ${createdUsers.length} Test-Accounts ohne Team.`,
   );
+
+  const projectTitles = [
+    { title: "Smart Campus Navigator", description: "Indoor-Navigation und Raumbelegung." },
+    { title: "Nachhaltige Lieferkette", description: "CO₂-Fußabdruck von Produkten transparent machen." },
+    { title: "Peer-Learning Plattform", description: "Lernpartner:innen finden und Sessions planen." },
+    { title: "Event Safety Dashboard", description: "Crowd-Management für Veranstaltungen." },
+    { title: "Gesundheits-Check-in", description: "Anonyme Symptom-Trends für Praxen (Demo)." },
+    { title: "Repair-Café App", description: "Reparatur-Termine und Ersatzteile koordinieren." },
+    { title: "Stadtgrün Mitmachen", description: "Bürgerbeteiligung bei Bepflanzung und Pflege." },
+    { title: "Barrierefreies Voting", description: "Digitale Abstimmungen barrierearm umsetzen." },
+    { title: "Lernstand-Tracker", description: "Kompetenzen für Teams sichtbar machen." },
+    { title: "Open Data Visualisierung", description: "Kommunale Daten verständlich aufbereiten." },
+    { title: "Krisen-Kommunikation", description: "Vorlagen und Kanäle für Hochschul-Krisenfälle." },
+    { title: "Labor-Equipment Sharing", description: "Gerätebuchung und Wartungsstatus." },
+  ];
+
+  let order = 0;
+  for (const p of projectTitles) {
+    const existing = await prisma.project.findFirst({ where: { title: p.title } });
+    if (!existing) {
+      await prisma.project.create({
+        data: { title: p.title, description: p.description, sortOrder: order++ },
+      });
+    }
+  }
+  console.log(`Projektkatalog: ${projectTitles.length} Einträge (neu angelegt, falls noch nicht vorhanden).`);
 }
 
 main()

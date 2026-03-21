@@ -1,8 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+
+import { isHiwiOnlyPath, parseCallbackPath } from "@/lib/route-role";
+import type { AppRole } from "@/types/next-auth";
 
 export default function LoginClient() {
   const router = useRouter();
@@ -32,11 +35,31 @@ export default function LoginClient() {
       return;
     }
 
-    // App Router: Session/Cookie für die nächste Navigation sicher einlesen.
+    // Server-Komponenten aktualisieren (Session für RSC)
     router.refresh();
 
-    // Middleware sorgt für Rollen-Redirect (HiWi/Admin -> /dashboard, Student -> /my-team).
-    router.push(callbackUrl || "/dashboard");
+    // Session explizit lesen — sonst kann die nächste Navigation noch ohne Rolle sein.
+    const session = await getSession();
+    const role = session?.user?.role as AppRole | undefined;
+    const path = parseCallbackPath(callbackUrl);
+
+    // Voller Seitenwechsel: Cookie/Session zuverlässig für getServerSession auf "/"
+    let target = "/dashboard";
+    if (role === "STUDENT") {
+      if (!path || path === "/login" || path === "/dashboard" || isHiwiOnlyPath(path)) {
+        target = "/";
+      } else {
+        target = path;
+      }
+    } else {
+      if (!path || path === "/login" || path === "/") {
+        target = "/dashboard";
+      } else {
+        target = path;
+      }
+    }
+
+    window.location.assign(target);
   }
 
   return (

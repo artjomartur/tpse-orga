@@ -11,7 +11,11 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body style={{ margin: 0, fontFamily: "system-ui, sans-serif", background: "#fef2f2", color: "#7f1d1d", padding: 24 }}>
         <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>Kritischer Fehler</h1>
         <p style={{ marginTop: 8, fontSize: "0.875rem" }}>{error.message || "Die Anwendung konnte nicht geladen werden."}</p>

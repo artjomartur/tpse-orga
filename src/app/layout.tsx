@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Providers from "./providers";
 
@@ -9,24 +9,18 @@ export const metadata: Metadata = {
   description: "Organisationplattform für TPSE an der TU Darmstadt",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <head>
-        {/* Minimaler Fallback, falls /_next/static CSS-Chunks nicht laden (kaputter .next Cache) */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: #f9fafb; color: #111827; }
-              a { color: #2563eb; }
-            `,
-          }}
-        />
-      </head>
-      <body>
+      <body className="app-body">
         <Providers>
-          <header className="border-b bg-white">
-            <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+          <header className="app-header border-b bg-white">
+            <div className="app-container mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
               <div className="font-semibold">
                 <Link href="/">TPSE Orga</Link>
               </div>
@@ -40,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+          <main className="app-main mx-auto max-w-5xl px-4 py-6">{children}</main>
         </Providers>
       </body>
     </html>

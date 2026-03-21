@@ -22,6 +22,9 @@ model User {
   scheduleItems  ScheduleItem[] @relation("ScheduleItemCreatedBy")
   announcements  Announcement[]  @relation("AnnouncementCreatedBy")
   resources      Resource[]      @relation("ResourceCreatedBy")
+
+  studentTodos       StudentTodo[]
+  teamSpecUploads    TeamSpecDocument[] @relation("TeamSpecUploadedBy")
 }
 
 model Team {
@@ -33,6 +36,62 @@ model Team {
 
   members     TeamMember[]
   submissions Submission[]
+
+  projectChoices TeamProjectChoice[]
+  specDocument   TeamSpecDocument?
+}
+
+/// Verfügbare Projekte (Katalog für Präferenzen)
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  sortOrder   Int      @default(0)
+
+  teamChoices TeamProjectChoice[]
+}
+
+/// Pro Team: 5 Favoriten (Platz 1–5) und 5 „Nieten“ (Platz 1–5)
+model TeamProjectChoice {
+  id        String @id @default(cuid())
+  teamId    String
+  projectId String
+  kind      String // "FAVORITE" | "NIE"
+  slot      Int // 1..5
+
+  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, kind, slot])
+  @@unique([teamId, projectId])
+}
+
+model StudentTodo {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  done      Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, sortOrder])
+}
+
+/// Eine Spezifikation pro Team (PDF → extrahierter Text)
+model TeamSpecDocument {
+  id            String   @id @default(cuid())
+  teamId        String   @unique
+  fileName      String
+  filePath      String
+  mimeType      String
+  extractedText String?
+  uploadedAt    DateTime @default(now())
+  uploadedById  String?
+
+  team       Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  uploadedBy User? @relation("TeamSpecUploadedBy", fields: [uploadedById], references: [id])
 }
 
 model TeamMember {

@@ -5,7 +5,7 @@ import { getToken } from "next-auth/jwt";
 import type { AppRole } from "@/types/next-auth";
 
 const hiwiRoutes = ["/dashboard", "/teams", "/submissions", "/grading", "/users"];
-const studentRoutes = ["/my-team", "/my-submissions", "/my-grades"];
+const studentRoutes = ["/my-team", "/student", "/my-submissions", "/my-grades"];
 
 function matchesAnyRoute(pathname: string, routes: string[]) {
   return routes.some((r) => pathname === r || pathname.startsWith(`${r}/`));
@@ -48,7 +48,7 @@ export async function middleware(req: NextRequest) {
 
   if (matchesAnyRoute(pathname, hiwiRoutes) && role !== "HIWI" && role !== "ADMIN") {
     // Avoid infinite redirect loops for STUDENT users.
-    if (role === "STUDENT") return NextResponse.redirect(new URL("/my-team", req.url));
+    if (role === "STUDENT") return NextResponse.redirect(new URL("/", req.url));
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
@@ -56,6 +56,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Alles unter /_next auslassen (static, image, webpack-hmr, …), sonst kann Dev-HMR/CSS flaky sein
+  matcher: ["/((?!api|_next|favicon.ico|uploads).*)"],
 };
 

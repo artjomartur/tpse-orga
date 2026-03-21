@@ -1,6 +1,5 @@
-import MyTeamClient from "./MyTeamClient";
+import { redirect } from "next/navigation";
 
-export default function MyTeamPage() {
-  return <MyTeamClient />;
+export default function MyTeamRedirectPage() {
+  redirect("/student/team");
 }
-

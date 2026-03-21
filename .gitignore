@@ -15,6 +15,9 @@ build/
 *.db-journal
 prisma/dev.db
 
+# Hochgeladene Team-Spezifikationen (PDFs)
+uploads/
+
 # Logs / OS
 npm-debug.log*
 *.log
