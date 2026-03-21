@@ -39,7 +39,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const updateData: Record<string, unknown> = {};
   if (body?.name !== undefined) updateData.name = String(body.name).trim();
-  if (body?.projectName !== undefined) updateData.projectName = body.projectName ? String(body.projectName) : null;
   if (body?.maxMembers !== undefined) updateData.maxMembers = Number(body.maxMembers);
 
   if (body?.memberEmails !== undefined && Array.isArray(body.memberEmails)) {

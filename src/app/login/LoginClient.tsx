@@ -32,6 +32,9 @@ export default function LoginClient() {
       return;
     }
 
+    // App Router: Session/Cookie für die nächste Navigation sicher einlesen.
+    router.refresh();
+
     // Middleware sorgt für Rollen-Redirect (HiWi/Admin -> /dashboard, Student -> /my-team).
     router.push(callbackUrl || "/dashboard");
   }

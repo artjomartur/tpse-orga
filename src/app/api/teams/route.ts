@@ -36,7 +36,6 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => ({}));
   const name = String(body?.name ?? "").trim();
-  const projectName = body?.projectName ? String(body.projectName) : null;
   const maxMembers = Number(body?.maxMembers ?? 5);
   const memberEmails: string[] = Array.isArray(body?.memberEmails)
     ? (body.memberEmails as unknown[]).map((e) => String(e).trim().toLowerCase()).filter(Boolean)
@@ -50,7 +49,6 @@ export async function POST(req: Request) {
   const created = await prisma.team.create({
     data: {
       name,
-      projectName,
       maxMembers: Number.isFinite(maxMembers) ? maxMembers : 5,
     },
   });

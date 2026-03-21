@@ -15,7 +15,7 @@ export async function GET() {
   const submissions = await prisma.submission.findMany({
     orderBy: { submittedAt: "desc" },
     include: {
-      team: { select: { id: true, name: true, projectName: true } },
+      team: { select: { id: true, name: true, project: { select: { id: true, name: true } } } },
       submittedBy: { select: { id: true, email: true, name: true, role: true } },
       grade: { select: { id: true, points: true, feedback: true, gradedById: true, createdAt: true } },
     },

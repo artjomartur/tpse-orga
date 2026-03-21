@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   // Skip Next.js internals and public routes.
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api") ||
     pathname === "/login" ||
     pathname === "/register" ||
     pathname === "/" ||
@@ -26,7 +26,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  // API-Routen prüfen Auth selbst (getServerSession). Hier kein JWT nötig — vermeidet Edge/Secret-Probleme.
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    console.error("NEXTAUTH_SECRET fehlt — Session/Middleware kann JWT nicht prüfen.");
+  }
+
+  const token = await getToken({ req, secret });
   if (!token) {
     const redirectUrl = new URL("/login", req.url);
     redirectUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
@@ -50,6 +56,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
 

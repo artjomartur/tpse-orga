@@ -8,7 +8,7 @@ type SubmissionDto = {
   fileUrl: string | null;
   status: string;
   submittedAt: string;
-  team: { id: string; name: string; projectName: string | null };
+  team: { id: string; name: string; project: { id: string; name: string } | null };
   submittedBy: { id: string; email: string; name: string | null; role: string };
   grade?: { points: number | null; feedback: string | null; id: string } | null;
 };

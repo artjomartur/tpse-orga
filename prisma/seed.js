@@ -44,6 +44,11 @@ async function main() {
     createdUsers.push(user);
   }
 
+  // Alte Zuordnungen der Test-Studierenden entfernen, damit /my-team das Zuordnungs-Tool zeigt.
+  await prisma.teamMember.deleteMany({
+    where: { userId: { in: createdUsers.map((u) => u.id) } },
+  });
+
   let team = await prisma.team.findFirst({
     where: { name: "Gruppe 1 – Gruppenfindung" },
   });
@@ -57,17 +62,11 @@ async function main() {
     });
   }
 
-  for (const u of createdUsers) {
-    await prisma.teamMember.upsert({
-      where: {
-        userId_teamId: { userId: u.id, teamId: team.id },
-      },
-      update: {},
-      create: { userId: u.id, teamId: team.id },
-    });
-  }
-
-  console.log(`Gruppenfindung: Team "${team.name}" mit ${createdUsers.length} Mitgliedern angelegt.`);
+  // Keine automatische Zuordnung: Studierende sollen das Zuordnungs-Tool unter /my-team nutzen.
+  // Das Team bleibt als leeres/offenes Beispiel in der Liste (0 Mitglieder), sofern neu angelegt.
+  console.log(
+    `Demo-Team "${team.name}" bereitgestellt (ohne feste Mitgliedszuordnung). ${createdUsers.length} Test-Accounts ohne Team.`,
+  );
 }
 
 main()

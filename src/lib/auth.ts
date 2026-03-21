@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import type { AppRole } from "@/types/next-auth";
 
 export const authOptions: NextAuthOptions = {
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   pages: {
     signIn: "/login",
   },
@@ -42,8 +42,12 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // On initial sign-in, `user` is available.
-      if (user) token.role = (user as { role?: AppRole }).role;
+      // On initial sign-in, `user` is available — sub/id explizit setzen (verhindert leere Sessions beim Seitenwechsel).
+      if (user) {
+        const u = user as { id?: string; role?: AppRole };
+        if (u.id) token.sub = u.id;
+        if (u.role) token.role = u.role;
+      }
       return token;
     },
     async session({ session, token }) {

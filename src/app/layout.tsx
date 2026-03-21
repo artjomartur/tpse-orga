@@ -12,6 +12,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
+      <head>
+        {/* Minimaler Fallback, falls /_next/static CSS-Chunks nicht laden (kaputter .next Cache) */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: #f9fafb; color: #111827; }
+              a { color: #2563eb; }
+            `,
+          }}
+        />
+      </head>
       <body>
         <Providers>
           <header className="border-b bg-white">
