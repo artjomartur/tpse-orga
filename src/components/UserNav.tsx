@@ -13,7 +13,7 @@ export function UserNav() {
   if (session?.user) {
     return (
       <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-600 dark:text-gray-300">
+        <span className="hidden sm:inline text-sm text-gray-600 dark:text-gray-300">
           {session.user.name || session.user.email}
         </span>
         <button

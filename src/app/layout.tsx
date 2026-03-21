@@ -25,11 +25,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen flex-col bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-blue-900/50">
         <Providers>
           <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/70 backdrop-blur-md transition-colors dark:border-slate-800/60 dark:bg-slate-950/70">
-            <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-              <div className="text-lg font-semibold hover:opacity-80 transition-opacity">
+            <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-3 sm:px-4">
+              <div className="text-base sm:text-lg font-semibold hover:opacity-80 transition-opacity">
                 <Link href="/">TPSE Orga</Link>
               </div>
-              <nav className="flex items-center gap-4 text-sm font-medium">
+              <nav className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium">
                 <UserNav />
                 <div className="hidden h-4 w-px bg-slate-200 sm:block dark:bg-slate-800" />
                 <ThemeToggle />

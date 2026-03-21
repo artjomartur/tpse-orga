@@ -15,7 +15,7 @@ export default function StudentSubNav() {
 
   return (
     <nav
-      className="flex flex-wrap gap-2 rounded-xl border border-slate-200/60 bg-white/50 backdrop-blur-md p-2 text-sm shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50"
+      className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-1 sm:gap-2 rounded-xl border border-slate-200/60 bg-white/50 backdrop-blur-md p-1.5 sm:p-2 text-xs sm:text-sm shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50"
       aria-label="Studierenden-Bereich"
     >
       {links.map((l) => {

@@ -31,7 +31,7 @@ export default async function DashboardPage() {
       {isHiwi && (
         <div className="space-y-3">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Hiwi Schnellzugriff</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link href="/hiwi/grading" className="group flex flex-col p-5 rounded-2xl border border-slate-200/60 bg-white/50 backdrop-blur-md shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50">
               <span className="text-2xl mb-2">📋</span>
               <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">Bewertungen</span>
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-slate-200/60 bg-white/50 backdrop-blur-md p-6 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
           <div className="text-xs text-gray-500 dark:text-slate-400">Nächster Termin</div>
           <div className="mt-1 font-semibold dark:text-slate-100">

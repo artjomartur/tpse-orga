@@ -60,6 +60,8 @@ body {
 
 .app-main a:hover,
 .app-header a:hover {
+  text-decoration: underline;
+}
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {

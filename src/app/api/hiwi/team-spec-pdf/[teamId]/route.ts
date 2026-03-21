@@ -9,7 +9,8 @@ async function getCfEnv(): Promise<Record<string, unknown> | null> {
 
 async function getDb() {
   const env = await getCfEnv();
-  if (env?.DB) return getPrismaWithD1(env.DB);
+  // Using explicit cast to any for D1Database to avoid {} mismatch in build env
+  if (env?.DB) return getPrismaWithD1(env.DB as any);
   return prisma;
 }
 
@@ -32,7 +33,7 @@ export async function GET(_req: Request, { params }: { params: { teamId: string 
   const cfEnv = await getCfEnv();
 
   if (cfEnv?.PDF_BUCKET) {
-    const obj = await cfEnv.PDF_BUCKET.get(r2Key);
+    const obj = await (cfEnv.PDF_BUCKET as any).get(r2Key);
     if (!obj) return NextResponse.json({ error: "Datei nicht in R2 gefunden." }, { status: 404 });
     const ab = await obj.arrayBuffer();
     return new NextResponse(ab, {

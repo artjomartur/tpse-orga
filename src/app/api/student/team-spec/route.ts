@@ -26,7 +26,7 @@ async function getCfEnv(): Promise<Record<string, any> | null> {
 
 async function getDb() {
   const env = await getCfEnv();
-  if (env?.DB) return getPrismaWithD1(env.DB);
+  if (env?.DB) return getPrismaWithD1(env.DB as any);
   return prisma;
 }
 
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
   if (env?.PDF_BUCKET) {
     // Cloudflare R2
-    await env.PDF_BUCKET.put(r2Key, buf, { httpMetadata: { contentType: "application/pdf" } });
+    await (env.PDF_BUCKET as any).put(r2Key, buf, { httpMetadata: { contentType: "application/pdf" } });
   } else {
     // Local dev: write to filesystem
     const { writeFile } = await import("fs/promises");
