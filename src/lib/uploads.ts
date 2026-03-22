@@ -1,12 +1,29 @@
-import fs from "fs/promises";
-import path from "path";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export const TEAM_SPECS_DIR = path.join(process.cwd(), "uploads", "team-specs");
+/**
+ * Lazy-loaded upload utilities to avoid loading 'fs' in Cloudflare Edge runtime.
+ */
+
+export const getTeamSpecsDir = () => {
+  const path = require("path");
+  return path.join(process.cwd(), "uploads", "team-specs");
+};
 
 export async function ensureTeamSpecsDir() {
-  await fs.mkdir(TEAM_SPECS_DIR, { recursive: true });
+  const fs = await import("fs/promises");
+  await fs.mkdir(getTeamSpecsDir(), { recursive: true });
 }
 
 export function teamSpecFilePath(teamId: string) {
-  return path.join(TEAM_SPECS_DIR, `${teamId}.pdf`);
+  const path = require("path");
+  return path.join(getTeamSpecsDir(), `${teamId}.pdf`);
+}
+
+export async function getCfEnv(): Promise<Record<string, any> | null> {
+  try {
+    const { env } = await getCloudflareContext();
+    return (env as Record<string, any>) ?? null;
+  } catch {
+    return null;
+  }
 }

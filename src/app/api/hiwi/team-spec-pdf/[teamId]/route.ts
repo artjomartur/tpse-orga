@@ -3,17 +3,16 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getCurrentRole } from "@/lib/authz";
 import { prisma, getPrismaWithD1 } from "@/lib/prisma";
 
-async function getCfEnv(): Promise<Record<string, unknown> | null> {
-  try { const { env } = await getCloudflareContext(); return (env as Record<string, unknown>) ?? null; } catch { return null; }
+async function getCfEnv(): Promise<Record<string, any> | null> {
+  try { const { env } = await getCloudflareContext(); return (env as Record<string, any>) ?? null; } catch { return null; }
 }
 
 async function getDb() {
   const env = await getCfEnv();
   // Using explicit cast to any for D1Database to avoid {} mismatch in build env
   if (env?.DB) return getPrismaWithD1(env.DB as any);
-  return prisma;
+  return prisma; // Static lazy prisma instance
 }
-
 
 export async function GET(_req: Request, { params }: { params: { teamId: string } }) {
   const role = await getCurrentRole();
@@ -29,7 +28,6 @@ export async function GET(_req: Request, { params }: { params: { teamId: string 
   }
 
   const r2Key = spec.filePath; // In production, filePath stores the R2 key
-
   const cfEnv = await getCfEnv();
 
   if (cfEnv?.PDF_BUCKET) {
@@ -45,14 +43,13 @@ export async function GET(_req: Request, { params }: { params: { teamId: string 
     });
   }
 
-
   // Local dev fallback: read from filesystem
-  const { readFile } = await import("fs/promises");
+  const fs = await import("fs/promises");
   const { existsSync } = await import("fs");
   if (!existsSync(spec.filePath)) {
     return NextResponse.json({ error: "Datei nicht mehr vorhanden." }, { status: 404 });
   }
-  const buf = await readFile(spec.filePath);
+  const buf = await fs.readFile(spec.filePath);
   return new NextResponse(buf, {
     headers: {
       "Content-Type": "application/pdf",

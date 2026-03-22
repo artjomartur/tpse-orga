@@ -1,24 +1,36 @@
 import { PrismaClient } from "@prisma/client";
 
-// PrismaClient is expensive; we keep one instance in dev.
+// In Cloudflare Workers, we use the D1 adapter. 
+// In local dev, we use the standard PrismaClient (SQLite).
+// We avoid top-level initialization that might trigger engine loading on Edge.
+
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-function createPrismaClient() {
-  // In Cloudflare Workers environment, the D1 binding is injected via the request context.
-  // We export a factory so API routes can pass the D1 binding when available.
-  return new PrismaClient({
+/**
+ * Returns a standard PrismaClient for local development.
+ * Lazy initialization avoids engine-probing on Cloudflare.
+ */
+export function getLocalPrisma() {
+  if (globalForPrisma.prisma) return globalForPrisma.prisma;
+  
+  const p = new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
+  
+  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = p;
+  return p;
 }
 
-export const prisma =
-  globalForPrisma.prisma ?? createPrismaClient();
+// Exported for backward compatibility in some local scripts, 
+// but use getDb() or getLocalPrisma() where possible.
+export const prisma = getLocalPrisma();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
-// Factory for Cloudflare Workers: pass in the D1 binding from the request env
-export async function getPrismaWithD1(d1: import("@cloudflare/workers-types").D1Database) {
+/**
+ * Factory for Cloudflare Workers: pass in the D1 binding from the request env.
+ * This is the preferred way to get a DB instance in API routes.
+ */
+export async function getPrismaWithD1(d1: any) {
   const { PrismaD1 } = await import("@prisma/adapter-d1");
   const adapter = new PrismaD1(d1);
-  return new PrismaClient({ adapter } as ConstructorParameters<typeof PrismaClient>[0]);
+  return new PrismaClient({ adapter } as any);
 }

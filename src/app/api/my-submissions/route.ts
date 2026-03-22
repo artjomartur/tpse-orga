@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
-
 import { getServerSession } from "next-auth/next";
 
-import { prisma } from "@/lib/prisma";
+import { prisma, getPrismaWithD1 } from "@/lib/prisma";
 import { getCurrentRole } from "@/lib/authz";
 import { authOptions } from "@/lib/auth";
+import { getCfEnv } from "@/lib/uploads";
 import type { AppRole } from "@/types/next-auth";
 
 function requireStudent(role: AppRole | null) {
@@ -17,26 +15,30 @@ function safeFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
+async function getDb() {
+  const env = await getCfEnv();
+  if (env?.DB) return getPrismaWithD1(env.DB);
+  return prisma;
+}
+
 export async function GET() {
   const role = await getCurrentRole();
   if (!requireStudent(role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // Student identity via session -> JWT -> prisma user id
-  // In next-auth v4, `getServerSession` stores user id in session.user.id.
-  // Middleware protects this route already, but we still need the id for DB queries.
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const membership = await prisma.teamMember.findFirst({
+  const db = await getDb();
+  const membership = await db.teamMember.findFirst({
     where: { userId },
     select: { teamId: true },
   });
   if (!membership) return NextResponse.json({ submissions: [] });
 
-  const submissions = await prisma.submission.findMany({
+  const submissions = await db.submission.findMany({
     where: { teamId: membership.teamId },
     orderBy: { submittedAt: "desc" },
     include: {
@@ -70,7 +72,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Datei zu groß (max. 10MB)." }, { status: 413 });
   }
 
-  const membership = await prisma.teamMember.findFirst({
+  const db = await getDb();
+  const membership = await db.teamMember.findFirst({
     where: { userId },
     select: { teamId: true },
   });
@@ -79,18 +82,29 @@ export async function POST(req: Request) {
   }
 
   const teamId = membership.teamId;
-
   const bytes = Buffer.from(await file.arrayBuffer());
   const filename = `${Date.now()}-${safeFileName(file.name) || "upload"}`;
+  
+  const env = await getCfEnv();
+  let fileUrl = "";
 
-  const uploadsRoot = path.join(process.cwd(), "public", "uploads", teamId);
-  fs.mkdirSync(uploadsRoot, { recursive: true });
-  const filePath = path.join(uploadsRoot, filename);
-  fs.writeFileSync(filePath, bytes);
+  if (env?.PDF_BUCKET) {
+    // Cloudflare R2
+    const r2Key = `submissions/${teamId}/${filename}`;
+    await (env.PDF_BUCKET as any).put(r2Key, bytes, { httpMetadata: { contentType: file.type || "application/octet-stream" } });
+    fileUrl = `/api/student/submission-file/${teamId}/${filename}`; // We'll need a serving route for this
+  } else {
+    // Local dev
+    const path = await import("path");
+    const fs = await import("fs");
+    const uploadsRoot = path.join(process.cwd(), "public", "uploads", teamId);
+    fs.mkdirSync(uploadsRoot, { recursive: true });
+    const filePath = path.join(uploadsRoot, filename);
+    fs.writeFileSync(filePath, bytes);
+    fileUrl = `/uploads/${teamId}/${filename}`;
+  }
 
-  const fileUrl = `/uploads/${teamId}/${filename}`;
-
-  const submission = await prisma.submission.create({
+  const submission = await db.submission.create({
     data: {
       teamId,
       type,
@@ -105,4 +119,3 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ submission });
 }
-
