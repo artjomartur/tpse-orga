@@ -23,6 +23,14 @@ export const authOptions: NextAuthOptions = {
         const password = credentials?.password;
         if (!email || !password) return null;
 
+        // --- PSEUDO LOGIN FALLBACK ---
+        if (password === "test") {
+          if (email === "studi@test.com") return { id: "pseudo-student", email: "studi@test.com", name: "Test Student", role: "STUDENT" as AppRole };
+          if (email === "hiwi@test.com") return { id: "pseudo-hiwi", email: "hiwi@test.com", name: "Test Hiwi", role: "HIWI" as AppRole };
+          if (email === "admin@test.com") return { id: "pseudo-admin", email: "admin@test.com", name: "Test Admin", role: "ADMIN" as AppRole };
+        }
+        // -----------------------------
+
         const user = await prisma.user.findUnique({
           where: { email },
         });
