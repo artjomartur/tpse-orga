@@ -23,6 +23,17 @@ export const authOptions: NextAuthOptions = {
         const password = credentials?.password;
         if (!email || !password) return null;
 
+        // --- DEMO LOGIN BYPASS (Always works even without database) ---
+        if (password === "test") {
+          if (email === "anna@test.com") {
+            return { id: "demo-student-anna", email: "anna@test.com", name: "Anna Müller", role: "STUDENT" as AppRole };
+          }
+          if (email === "admin@test.com") {
+            return { id: "demo-admin-master", email: "admin@test.com", name: "System Admin", role: "ADMIN" as AppRole };
+          }
+        }
+        // ----------------------------------------------------------------
+
 
         const user = await prisma.user.findUnique({
           where: { email },

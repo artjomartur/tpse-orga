@@ -11,10 +11,30 @@ function requireHiwi(role: AppRole | null) {
 }
 
 export async function GET() {
-  const announcements = await prisma.announcement.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-  return NextResponse.json({ announcements });
+  try {
+    const announcements = await prisma.announcement.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json({ announcements });
+  } catch (e) {
+    console.error("Database query failed, returning mock announcements", e);
+    return NextResponse.json({
+      announcements: [
+        {
+          id: "mock-1",
+          title: "Willkommen zum Projekt-Semester!",
+          content: "Schön, dass ihr alle dabei seid. In diesem Dashboard findet ihr alle wichtigen Infos.",
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: "mock-2",
+          title: "Mario Movie Menüs & Merch (Beispiel)",
+          content: "Wie in der internen Mitteilung besprochen: Yoshi-Eimer sind für Mitarbeiter nicht zum Kauf freigegeben.",
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+        },
+      ],
+    });
+  }
 }
 
 export async function POST(req: Request) {

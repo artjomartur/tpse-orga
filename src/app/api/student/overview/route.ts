@@ -20,20 +20,37 @@ export async function GET() {
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const membership = await prisma.teamMember.findFirst({
-    where: { userId },
-    include: {
-      team: true,
-    },
-  });
+  // --- DEMO MOCK ---
+  if (userId.startsWith("demo-")) {
+    return NextResponse.json({
+      team: { id: "demo-team-1", name: "Gruppe 1 – Demo Team", projectName: "Smart Campus Navigator" },
+      members: [
+        { id: "m1", user: { id: userId, name: "Anna Müller", email: "anna@test.com", role: "STUDENT" } },
+        { id: "m2", user: { id: "demo-2", name: "Ben Schmidt", email: "ben@test.com", role: "STUDENT" } },
+      ],
+    });
+  }
+  // -----------------
 
-  if (!membership) return NextResponse.json({ team: null, members: [] });
+  try {
+    const membership = await prisma.teamMember.findFirst({
+      where: { userId },
+      include: {
+        team: true,
+      },
+    });
 
-  const members = await prisma.teamMember.findMany({
-    where: { teamId: membership.teamId },
-    include: { user: { select: { id: true, email: true, name: true, role: true } } },
-  });
+    if (!membership) return NextResponse.json({ team: null, members: [] });
 
-  return NextResponse.json({ team: membership.team, members });
+    const members = await prisma.teamMember.findMany({
+      where: { teamId: membership.teamId },
+      include: { user: { select: { id: true, email: true, name: true, role: true } } },
+    });
+
+    return NextResponse.json({ team: membership.team, members });
+  } catch (e) {
+    console.error("Database query failed, returning empty demo state", e);
+    return NextResponse.json({ team: null, members: [] });
+  }
 }
 

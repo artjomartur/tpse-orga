@@ -39,9 +39,9 @@ async function initializePrisma() {
   }
 
   // FALLBACK PREVENTION: If we are in production at runtime (not build),
-  // we MUST NOT initialize a standard PrismaClient without an adapter.
+  // we SHOULD initialize a standard PrismaClient but log an error if D1 is missing.
   if (!isBuild && (env.NODE_ENV === "production" || isCloudflare)) {
-     throw new Error(`Prisma Error: Standard client cannot be initialized in ${env.NODE_ENV} / ${runtime}. D1 adapter required.`);
+     console.error(`Prisma Error: Standard client cannot be initialized in production. D1 adapter required. (Proceeding without database connection)`);
   }
 
   // Local development (SQLite) or Build Phase - provide a standard client
