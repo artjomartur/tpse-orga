@@ -9,64 +9,56 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  name         String?
-  role         String   @default("STUDENT")
-  passwordHash String
-  createdAt    DateTime @default(now())
-
-  teamMembers TeamMember[]
-  submissions Submission[] @relation("SubmissionSubmittedBy")
-  grades      Grade[]      @relation("GradeGradedBy")
-
-  scheduleItems ScheduleItem[] @relation("ScheduleItemCreatedBy")
-  announcements Announcement[] @relation("AnnouncementCreatedBy")
-  resources     Resource[]     @relation("ResourceCreatedBy")
-
-  studentTodos    StudentTodo[]
-  teamSpecUploads TeamSpecDocument[] @relation("TeamSpecUploadedBy")
-
-  hiwiActivities HiwiActivity[]
-  hiwiTodos      HiwiTodo[]
-  pdfAnnotations PdfAnnotation[]
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  name               String?
+  role               String              @default("STUDENT")
+  passwordHash       String
+  createdAt          DateTime            @default(now())
+  announcements      Announcement[]      @relation("AnnouncementCreatedBy")
+  grades             Grade[]             @relation("GradeGradedBy")
+  hiwiActivities     HiwiActivity[]
+  hiwiTodos          HiwiTodo[]
+  pdfAnnotations     PdfAnnotation[]
+  resources          Resource[]          @relation("ResourceCreatedBy")
+  scheduleItems      ScheduleItem[]      @relation("ScheduleItemCreatedBy")
   studentAssignments StudentAssignment[]
+  studentTodos       StudentTodo[]
+  submissions        Submission[]        @relation("SubmissionSubmittedBy")
+  teamMembers        TeamMember[]
+  teamSpecUploads    TeamSpecDocument[]  @relation("TeamSpecUploadedBy")
 }
 
 model Team {
-  id          String   @id @default(cuid())
-  name        String
-  projectName String?
-  maxMembers  Int      @default(5)
-  createdAt   DateTime @default(now())
-
-  members     TeamMember[]
-  submissions Submission[]
-
+  id             String              @id @default(cuid())
+  name           String
+  projectName    String?
+  maxMembers     Int                 @default(5)
+  createdAt      DateTime            @default(now())
+  submissions    Submission[]
+  members        TeamMember[]
   projectChoices TeamProjectChoice[]
   specDocument   TeamSpecDocument?
 }
 
 /// Verfügbare Projekte (Katalog für Präferenzen)
 model Project {
-  id          String  @id @default(cuid())
+  id          String              @id @default(cuid())
   title       String
   description String?
-  sortOrder   Int     @default(0)
-
+  sortOrder   Int                 @default(0)
   teamChoices TeamProjectChoice[]
 }
 
 /// Pro Team: 5 Favoriten (Platz 1–5) und 5 „Nieten“ (Platz 1–5)
 model TeamProjectChoice {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   teamId    String
   projectId String
-  kind      String // "FAVORITE" | "NIE"
-  slot      Int // 1..5
-
-  team    Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  kind      String
+  slot      Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team      Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, kind, slot])
   @@unique([teamId, projectId])
@@ -79,101 +71,89 @@ model StudentTodo {
   done      Boolean  @default(false)
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, sortOrder])
 }
 
 /// Eine Spezifikation pro Team (PDF → extrahierter Text)
 model TeamSpecDocument {
-  id            String   @id @default(cuid())
-  teamId        String   @unique
+  id            String          @id @default(cuid())
+  teamId        String          @unique
   fileName      String
   filePath      String
   mimeType      String
   extractedText String?
-  uploadedAt    DateTime @default(now())
+  uploadedAt    DateTime        @default(now())
   uploadedById  String?
-
-  team       Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  uploadedBy User? @relation("TeamSpecUploadedBy", fields: [uploadedById], references: [id])
-  annotations PdfAnnotation[]
+  annotations   PdfAnnotation[]
+  uploadedBy    User?           @relation("TeamSpecUploadedBy", fields: [uploadedById], references: [id])
+  team          Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 model TeamMember {
   id     String @id @default(cuid())
   userId String
   teamId String
-
-  user User @relation(fields: [userId], references: [id])
-  team Team @relation(fields: [teamId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@unique([userId, teamId])
 }
 
 model Submission {
-  id          String    @id @default(cuid())
-  teamId      String
-  type        String
-  deadline    DateTime?
-  fileUrl     String?
-  status      String    @default("PENDING")
-  submittedAt DateTime  @default(now())
-
-  team Team @relation(fields: [teamId], references: [id])
-
+  id            String    @id @default(cuid())
+  teamId        String
+  type          String
+  deadline      DateTime?
+  fileUrl       String?
+  status        String    @default("PENDING")
+  submittedAt   DateTime  @default(now())
   submittedById String?
-  submittedBy   User?   @relation("SubmissionSubmittedBy", fields: [submittedById], references: [id])
-
-  grade Grade?
+  grade         Grade?
+  submittedBy   User?     @relation("SubmissionSubmittedBy", fields: [submittedById], references: [id])
+  team          Team      @relation(fields: [teamId], references: [id])
 }
 
 model Grade {
-  id           String @id @default(cuid())
-  submissionId String @unique
-
-  points    Float?
-  feedback  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  gradedById String?
-  gradedBy   User?   @relation("GradeGradedBy", fields: [gradedById], references: [id])
-
-  submission Submission @relation(fields: [submissionId], references: [id])
+  id           String     @id @default(cuid())
+  submissionId String     @unique
+  points       Float?
+  feedback     String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  gradedById   String?
+  submission   Submission @relation(fields: [submissionId], references: [id])
+  gradedBy     User?      @relation("GradeGradedBy", fields: [gradedById], references: [id])
 }
 
 model ScheduleItem {
-  id        String   @id @default(cuid())
-  title     String
-  date      DateTime
-  type      String
-  createdAt DateTime @default(now())
-
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  type        String
+  createdAt   DateTime @default(now())
   createdById String?
-  createdBy   User?   @relation("ScheduleItemCreatedBy", fields: [createdById], references: [id])
+  createdBy   User?    @relation("ScheduleItemCreatedBy", fields: [createdById], references: [id])
 }
 
 model Announcement {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  createdAt   DateTime @default(now())
   createdById String?
-  createdBy   User?   @relation("AnnouncementCreatedBy", fields: [createdById], references: [id])
+  createdBy   User?    @relation("AnnouncementCreatedBy", fields: [createdById], references: [id])
 }
 
 model Resource {
-  id        String   @id @default(cuid())
-  title     String
-  url       String
-  category  String?
-  createdAt DateTime @default(now())
-
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  category    String?
+  createdAt   DateTime @default(now())
   createdById String?
-  createdBy   User?   @relation("ResourceCreatedBy", fields: [createdById], references: [id])
+  createdBy   User?    @relation("ResourceCreatedBy", fields: [createdById], references: [id])
 }
 
 model HiwiActivity {
@@ -184,8 +164,7 @@ model HiwiActivity {
   minutes     Int      @default(0)
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model HiwiTodo {
@@ -194,33 +173,29 @@ model HiwiTodo {
   title     String
   done      Boolean  @default(false)
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PdfAnnotation {
-  id               String   @id @default(cuid())
+  id               String           @id @default(cuid())
   teamSpecId       String
-  content          String   // JSON string storing react-pdf-highlighter annotation data
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
+  content          String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   createdById      String
-  createdBy        User     @relation(fields: [createdById], references: [id])
-
   teamSpecDocument TeamSpecDocument @relation(fields: [teamSpecId], references: [id], onDelete: Cascade)
+  createdBy        User             @relation(fields: [createdById], references: [id])
 }
 
 /// Aktivitäten/Aufgaben, die ein Hiwi für Studierende anlegt
 model StudentAssignment {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   title          String
-  description    String?  // Notizen / Aufgabenbeschreibung
-  submissionType String   // z.B. "PDF", "Link", "Code", "Präsentation"
+  description    String?
+  submissionType String
   deadline       DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   createdById    String
-  createdBy      User     @relation(fields: [createdById], references: [id])
+  createdBy      User      @relation(fields: [createdById], references: [id])
 }

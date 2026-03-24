@@ -62,12 +62,12 @@ export default function LoginClient() {
     window.location.assign(target);
   }
 
-  async function loginAs(roleEmail: string) {
+  async function loginAs(roleEmail: string, pass: string) {
     setError(null);
     setLoading(true);
     const result = await signIn("credentials", {
       email: roleEmail,
-      password: "test",
+      password: pass,
       redirect: false,
     });
     setLoading(false);
@@ -108,23 +108,23 @@ export default function LoginClient() {
 
       <div className="grid grid-cols-2 gap-4">
         <button
-          onClick={() => loginAs("studi@test.com")}
+          onClick={() => loginAs("anna.mueller@tpse.test", "student123")}
           disabled={loading}
           className="flex flex-col items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50 dark:hover:bg-slate-900"
         >
           <span className="text-2xl mb-1">🎓</span>
           <span className="text-sm font-semibold dark:text-slate-100">Student</span>
-          <span className="text-[10px] text-slate-500">Demo</span>
+          <span className="text-[10px] text-slate-500">Anna Müller</span>
         </button>
 
         <button
-          onClick={() => loginAs("admin@test.com")}
+          onClick={() => loginAs("admin@example.com", "change-me")}
           disabled={loading}
           className="flex flex-col items-center justify-center rounded-2xl border border-slate-200/60 bg-white/50 p-6 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:shadow-md dark:border-slate-800/60 dark:bg-slate-900/50 dark:hover:bg-slate-900"
         >
           <span className="text-2xl mb-1">⚙️</span>
           <span className="text-sm font-semibold dark:text-slate-100">Admin</span>
-          <span className="text-[10px] text-slate-500">Demo</span>
+          <span className="text-[10px] text-slate-500">Betriebsleitung</span>
         </button>
       </div>
 
