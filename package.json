@@ -9,15 +9,15 @@
     "dev:clean": "rm -rf .next && WATCHPACK_POLLING=true next dev -p 3000",
     "dev:clean:kill": "npm run kill:3000 && rm -rf .next && WATCHPACK_POLLING=true next dev -p 3000",
     "dev:3001": "WATCHPACK_POLLING=true next dev -p 3001",
-    "build": "prisma generate && next build && opennextjs-cloudflare build --skipBuild --dangerouslyUseUnsupportedNextVersion",
+    "build": "rm -rf .open-next .next && prisma generate && next build && opennextjs-cloudflare build --skipBuild --dangerouslyUseUnsupportedNextVersion",
     "start": "next start -p 3000",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:seed": "node prisma/seed.js",
     "db:studio": "prisma studio",
-    "deploy": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare preview"
+    "deploy": "npm run build && opennextjs-cloudflare deploy",
+    "preview": "npm run build && opennextjs-cloudflare preview"
   },
   "keywords": [],
   "author": "",
