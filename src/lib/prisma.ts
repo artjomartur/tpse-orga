@@ -6,80 +6,50 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 /**
- * Internal helper to get/initialize the client.
+ * Returns a standard PrismaClient for local development or Cloudflare D1 in production.
  */
-async function getClientAsync(): Promise<PrismaClient> {
+async function initializePrisma() {
   if (globalForPrisma.prisma) return globalForPrisma.prisma;
 
-  try {
-    const { env } = await getCloudflareContext();
-    const d1 = (env as any).DB;
+  const env = process.env as any;
+  const isCloudflare = env.NEXT_RUNTIME === "edge" || env.NEXT_RUNTIME === "nodejs" || typeof (globalThis as any).WebSocketPair !== "undefined";
 
-    if (d1 && typeof d1.prepare === "function") {
-      const adapter = new PrismaD1(d1);
-      const p = new PrismaClient({ adapter } as any);
-      globalForPrisma.prisma = p;
-      return p;
+  if (isCloudflare) {
+    try {
+      // In OpenNext, getCloudflareContext is the reliable way to get bindings
+      const { env: cfEnv } = await getCloudflareContext();
+      const d1 = (cfEnv as any).DB;
+
+      if (d1 && typeof d1.prepare === "function") {
+        const adapter = new PrismaD1(d1);
+        const p = new PrismaClient({ adapter } as any);
+        globalForPrisma.prisma = p;
+        return p;
+      }
+    } catch (e) {
+      console.error("Cloudflare context initialization failed:", e);
     }
-  } catch (e) {
-    console.error("Error getting Cloudflare context:", e);
   }
 
-  // Local development (SQLite) fallback
+  // Fallback for local development or if D1 is missing
   const p = new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+    log: env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
-  if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = p;
+  if (env.NODE_ENV !== "production") globalForPrisma.prisma = p;
   return p;
 }
 
+// Top-level await to ensure prisma is ready before anything else uses it.
+// This works in Cloudflare Workers and modern Next.js environments.
+export const prisma = await initializePrisma();
+
 /**
- * Direct initialization for the singleton.
- * Next.js on Cloudflare supports top-level await in many cases via OpenNext.
+ * Backward compatibility helper
  */
-let initializedClient: PrismaClient | null = null;
-
-// This Proxy will handle the synchronous access by returning the models.
-// But we need to make sure the methods called on these models are correctly handled.
-// Since most Prisma calls are like 'await prisma.user.findMany()', 
-// we can use a proxy that returns 'thenables' or better yet:
-// just initialize it synchronously if we are NOT on Cloudflare, 
-// and if we ARE on Cloudflare, we hope it's already warmed up or we use getPrismaWithD1 directly in routes.
-
-// Actually, the most robust way without top-level await issues is to provide a proxy 
-// that ensures the client is ready.
-
-export const prisma = new Proxy({} as PrismaClient, {
-  get(target, prop, receiver) {
-    if (prop === "then") return undefined;
-
-    // Use a pre-initialized global if available
-    if (globalForPrisma.prisma) {
-      return Reflect.get(globalForPrisma.prisma, prop, receiver);
-    }
-
-    // On local dev, we can just initialize synchronously
-    if (process.env.NODE_ENV === "development" || !process.env.NEXT_RUNTIME) {
-       const p = new PrismaClient();
-       globalForPrisma.prisma = p;
-       return Reflect.get(p, prop, receiver);
-    }
-
-    // On Cloudflare, we have a problem here if we haven't initialized yet.
-    // However, OpenNext runs everything in a context where we can actually 
-    // try to get the binding from globalThis as a last resort.
-    const d1 = (globalThis as any).DB || (process.env as any).DB;
-    if (d1) {
-       const adapter = new PrismaD1(d1);
-       const p = new PrismaClient({ adapter } as any);
-       globalForPrisma.prisma = p;
-       return Reflect.get(p, prop, receiver);
-    }
-
-    throw new Error(`Prisma client not initialized and D1 binding 'DB' not found. Mode: ${process.env.NODE_ENV}, Runtime: ${process.env.NEXT_RUNTIME}`);
-  }
-});
+export async function getLocalPrisma() {
+  return prisma;
+}
 
 /**
  * Factory for Cloudflare Workers: pass in the D1 binding from the request env.
